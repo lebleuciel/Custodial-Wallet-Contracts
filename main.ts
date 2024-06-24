@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const axios = require("axios");
 require('dotenv').config();
 const { ethers } = require("ethers");
-var { abi } = require('./artifacts/contracts/CustodialWalletFactoryV2.sol/CustodialWalletFactoryV2.json');
+var { abi } = require('./artifacts/contracts/Erc721.sol/TatumErc721.json');
 
 const app = express();
 app.use(bodyParser.json());
