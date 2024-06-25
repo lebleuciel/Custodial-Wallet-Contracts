@@ -37,17 +37,20 @@ router.post('/mintWithTokenURI', async (req: any, res: any) => {
 
 
 // Endpoint to mint multiple tokens with URIs
-router.post('/mintMultiple', async (req:any, res:any) => {
+router.post('/mintMultiple', async (req: any, res: any) => {
     try {
         const { to, tokenIds, uris } = req.body;
-        const tx = await contract.mintMultiple(to, tokenIds, uris);
-        await tx.wait();
-        res.json({ success: true, message: 'Tokens minted successfully.' });
+        // Convert single address to an array if it's not already
+        const toArray = Array.isArray(to) ? to : [to];
+        
+        const tx = await contract.mintMultiple(toArray, tokenIds, uris);
+        const receipt = await tx.wait();
+        res.json({ success: true, message: 'Tokens minted successfully.', receipt });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Failed to mint tokens',error: (error as any).message });
+        console.error("Error minting multiple tokens:", error);
+        res.status(500).json({ success: false, message: 'Failed to mint tokens', error: (error as any).message });
     }
-    }
-);
+});
 
 // Endpoint to burn a token
 router.post('/burn', async (req:any, res:any) => {
