@@ -20,7 +20,7 @@ const contract = new ethers.Contract(contractAddress, abi, wallet);
 router.post('/mint', async (req: any, res: any) => {
     try {
         const { to, amount } = req.body;
-        const tx = await contract.mint(to, ethers.utils.parseUnits(amount, await contract.decimals()));
+        const tx = await contract.mint(to, ethers.parseUnits(amount, await contract.decimals()));
         const receipt = await tx.wait();
         res.json({
             success: true,
@@ -81,7 +81,7 @@ router.get('/balanceOf', async (req: any, res: any) => {
         const balance = await contract.balanceOf(address);
         res.json({
             success: true,
-            balance: ethers.utils.formatUnits(balance, await contract.decimals())
+            balance: ethers.formatUnits(balance, await contract.decimals())
         });
     } catch (error) {
         res.status(500).json({
