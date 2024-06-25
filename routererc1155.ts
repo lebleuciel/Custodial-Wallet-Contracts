@@ -41,7 +41,7 @@ router.post('/mint', async (req: any, res: any) => {
 router.post('/mintBatch', async (req: any, res: any) => {
     try {
         const { to, ids, amounts, uris } = req.body;
-        const tx = await contract.mintBatch(to, ids, amounts, uris, []);
+        const tx = await contract.mintBatch(to, ids, amounts, uris,  new Uint8Array());
         const receipt = await tx.wait();
         res.json({
             success: true,
