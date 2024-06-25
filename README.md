@@ -28,7 +28,9 @@ Deploy the Contract:
  Execute the following command to deploy your betting smart contract onto the Polygon network:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network mumbai
+px hardhat run scripts/deployerc721.ts --network amoy --show-stack-tracespx hardhat run scripts/deployerc1155.ts --network amoy 
+--show-stack-traces
+px hardhat run scripts/deployerc20.ts --network amoy --show-stack-traces
 ```
 
 This step compiles your Solidity contracts, migrates them to the specified network (Polygon, in this case), and deploys them to the blockchain.
