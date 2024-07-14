@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -9,11 +9,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TatumErc721 is ERC721, ERC721URIStorage, ERC721Burnable, AccessControl, Ownable {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant TRANSFER_ROLE = keccak256("TRANSFER_ROLE"); // New role for transfer functionality
     string private _baseUri;
 
     constructor(string memory name, string memory symbol, string memory baseURI, address admin, address minter) ERC721(name, symbol) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(MINTER_ROLE, admin);
+        _grantRole(TRANSFER_ROLE, admin); // Grant transfer role to admin
         if (admin != minter) {
             _grantRole(MINTER_ROLE, minter);
         }
@@ -32,7 +34,6 @@ contract TatumErc721 is ERC721, ERC721URIStorage, ERC721Burnable, AccessControl,
     ) public onlyRole(MINTER_ROLE) {
         safeMint(to, tokenId, uri);
     }
-
 
     function safeMint(address to, uint256 tokenId, string memory uri)
     public
@@ -60,8 +61,14 @@ contract TatumErc721 is ERC721, ERC721URIStorage, ERC721Burnable, AccessControl,
         }
     }
 
-    // The following functions are overrides required by Solidity.
+    // Function to transfer NFT by approved operators or from the owner directly
+    function transferNft(address from, address to, uint256 tokenId) public {
+        require(hasRole(TRANSFER_ROLE, _msgSender()), "Caller is not a transfer role");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "Transfer caller is not owner nor approved");
+        _transfer(from, to, tokenId);
+    }
 
+    // The following functions are overrides required by Solidity.
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }

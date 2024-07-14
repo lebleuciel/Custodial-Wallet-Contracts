@@ -16,6 +16,60 @@ const signer = new ethers.Wallet(privateKey, provider);
 const contractAddress = process.env.CONTRACT_ADDRESS;
 const contract = new ethers.Contract(contractAddress, abi, wallet);
 
+
+// Endpoint to transfer an NFT
+router.post('/transferNft', async (req:any, res:any) => {
+    try {
+        const { from, to, tokenId } = req.body;
+
+        if (!from || !to || !tokenId) {
+            return res.status(400).json({ success: false, message: 'From address, to address, and tokenId are required' });
+        }
+
+        const tx = await contract.transferFrom(from, to, tokenId);
+        const receipt = await tx.wait();
+
+        res.json({
+            success: true,
+            message: 'NFT transferred successfully',
+            transactionHash: receipt.transactionHash,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to transfer NFT',
+            error: (error as any).message,
+        });
+    }
+});
+
+// Endpoint to add a minter
+router.post('/addMinter', async (req: any, res: any) => {
+    try {
+        const { minterAddress } = req.body;
+
+        if (!minterAddress) {
+            return res.status(400).json({ success: false, message: 'Minter address is required' });
+        }
+
+        const MINTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MINTER_ROLE"));
+        const tx = await contract.grantRole(MINTER_ROLE, minterAddress);
+        const receipt = await tx.wait();
+
+        res.json({
+            success: true,
+            message: 'Minter role granted successfully',
+            transactionHash: receipt,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to grant minter role',
+            error: (error as any).message         });
+    }
+});
+
+
 // Endpoint to mint a single token with a URI
 router.post('/mintWithTokenURI', async (req: any, res: any) => {
     try {
@@ -24,7 +78,7 @@ router.post('/mintWithTokenURI', async (req: any, res: any) => {
         const receipt = await tx.wait();
         res.json({ 
             success: true, 
-            message: 'Token minted successfullyyy.',receipt  ,
+            message: 'Token minted successfully.',receipt  ,
         });
     } catch (error) {
         res.status(500).json({ 
