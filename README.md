@@ -1,4 +1,5 @@
 # Custodial Wallet Contracts
+Custodial Wallet Contracts is a blockchain-based project that provides a framework for deploying and managing custodial smart wallets on the Polygon network. It includes deployable ERC-20, ERC-721, and ERC-1155 contracts, along with supporting scripts and APIs for wallet creation, batch operations, and retrieval.
 # Running the Project
 
 To get the Custodial Contract up and running, follow these steps carefully:
